@@ -14,6 +14,10 @@ import Listagem from "./src/components/Listagem";
 export default function App() {
   const [nome, setNome] = useState("");
   const [mmr, setMmr] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [posicao, setPosicao] = useState("");
   const [organizacao, setOrganizacao] = useState("");
   const [apelido, setApelido] = useState("");
@@ -73,11 +77,53 @@ export default function App() {
     }
   }
 
+  async function cadastrarUsuario() {
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, senha)
+      .then((value) => {
+        firebase.database().ref("usuarios").child(value.user.uid).set({
+          cidade: cidade,
+        });
+        alert("Usuario cadastrado com sucesso" + value.user.email);
+        setEmail("");
+        setSenha("");
+        setCidade("");
+      })
+      .catch((error) => {
+        alert("Algo deu errado");
+        return;
+      });
+  }
+
+  async function login() {
+    await firebase
+      .auth()
+      .signInWithEmailAndPassword(email, senha)
+      .then((value) => {
+        alert("Bem vindo(a):" + value.usuario.email);
+        setUsuario(value.usuari.email);
+      })
+      .catch((error) => {
+        alert("Algo deu errado");
+        return;
+      })
+      setEmail("");
+      setSenha("");
+      setCidade("");
+  }
+
+  async function logout() {
+    await firebase.auth().signOut();
+    setUsuario("");
+    alert("Deslogado com sucesso");
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.principal}>Cadastro de Pro Player de Dota2</Text>
 
-      <Text style={styles.texto}>Nome:</Text>
+      <Text style={styles.texto}>Nome: </Text>
       <TextInput
         style={styles.input}
         underlineColorAndroid="transpartent"
@@ -119,6 +165,44 @@ export default function App() {
 
       <Button title="Novo Cadastro" onPress={cadastrar} />
 
+      <Text style={styles.principal}>Cadastrar/Logar na Plafatorma</Text>
+
+      <Text style={styles.texto}>E-mail:</Text>
+      <TextInput
+        style={styles.input}
+        underlineColorAndroid="transpartent"
+        onChangeText={(texto) => setEmail(texto)}
+        value={email}
+      />
+
+      <Text style={styles.texto}>Password:</Text>
+      <TextInput
+        style={styles.input}
+        secureTextEntry={true}
+        underlineColorAndroid="transpartent"
+        onChangeText={(texto) => setSenha(texto)}
+        value={senha}
+      />
+
+      <Text style={styles.texto}>Cidade:</Text>
+      <TextInput
+        style={styles.input}
+        underlineColorAndroid="transpartent"
+        onChangeText={(texto) => setCidade(texto)}
+        value={cidade}
+      />
+
+      <Button title="Cadastrar Acesso" onPress={cadastrarUsuario} />
+
+      {usuario.length > 0 ? 
+      (
+        <Button title="Sair do sistema" onPress={logout} />
+      ) :
+      (
+        <Button title="Logar na plataforma" onPress={login} />
+      )
+    }
+
       {loading ? (
         <ActivityIndicator color="#121212" size={45} />
       ) : (
@@ -127,7 +211,7 @@ export default function App() {
           data={dota2}
           renderItem={({ item }) => <Listagem data={item} />}
         />
-      )}
+      )}  
     </View>
   );
 }
