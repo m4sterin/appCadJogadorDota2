@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Dota 2 Player register 👋</h1>
 <p>
-<img alt="Version" src="https://img.shields.io/badge/version-v0-blue.svg?cacheSeconds=2592000" />
+<img alt="Version" src="https://img.shields.io/badge/version-v1-blue.svg?cacheSeconds=2592000" />
   <a href=".docs/" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-no-brightgreen.svg" />
   </a>
